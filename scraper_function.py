@@ -4,10 +4,9 @@ from scrapy import log, signals
 from recipe_scraper.spiders.taste_spider import RecipeSpider
 from scrapy.utils.project import get_project_settings
 import string
-import json
 import re
+import json
 import sys
-re.DOTALL
 
 def scraper(url):   #function that scrapes recipe name and ingridients from given url
     open('results.log', 'w').close()
@@ -84,13 +83,6 @@ def scraper(url):   #function that scrapes recipe name and ingridients from give
                 else:                                   #if no space between amount and unit, split accordingly
                     name = ' '.join(part[1:])
                     amount = re.findall(re_amount, part[0])[0]
-                    '''
-                    amounts =  re.findall(re_amount, part[0])[0]
-                    total_amount = 0
-                    for amount in amounts:
-                        if amount != None:
-                            total_amount = total_amount + amount
-                    '''
                     units = re.findall(re_unit, part[0])
                     for i in range(0,len(units)):
                         if units[i] != '':
@@ -109,8 +101,8 @@ def scraper(url):   #function that scrapes recipe name and ingridients from give
             else:
                 ingredient = {'name': name, 'amount': amount, 'unit': unit} #create ingredient dictionary
         recipe.append(ingredient)           #append ingredient to recipe list structure
+    #print recipe
 
-    print recipe
     return recipe      #return list of recipe name and ingredients
 
 def json_scraper(url):
@@ -118,20 +110,25 @@ def json_scraper(url):
     recipe_name = results[0]
     ingredients = results[1:]
     d = {"name": recipe_name, "ingredients": ingredients}
+    print json.dumps(d)
     return json.dumps(d)
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        print "Doing actual scrape"
-        url = sys.argv[1]
+    #print ":::".join([x for x in sys.argv])
+    if len(sys.argv) <= 1:
+        for arg in sys.argv:
+            print arg
+        print "Please supply a URL!"
     else:
-        url = 'http://www.taste.com.au/recipes/37970/chorizo+and+crisp+smashed+potato+salad?ref=zone,salad-recipes'
-    #scraper('http://www.taste.com.au/recipes/18338/basic+omelette')
-    #scraper('http://www.taste.com.au/recipes/13783/salsa')
-    #scraper('http://www.taste.com.au/recipes/37876/strawberry+coconut+ice?ref=zone,feed-your-family')
-    #scraper('http://www.taste.com.au/recipes/37969/pulled+pork+rolls+with+apple+and+radish+coleslaw?ref=zone,salad-recipes')
-    #scraper('http://www.taste.com.au/recipes/37822/chilli+mint+chicken+with+avocado+and+snow+pea+sprouts?ref=zone,lunch-and-snacks')
-    scraper(url)
+        url = sys.argv[1]
+        #scraper('http://www.taste.com.au/recipes/18338/basic+omelette')
+        #scraper('http://www.taste.com.au/recipes/13783/salsa')
+        #scraper('http://www.taste.com.au/recipes/37876/strawberry+coconut+ice?ref=zone,feed-your-family')
+        #scraper('http://www.taste.com.au/recipes/37969/pulled+pork+rolls+with+apple+and+radish+coleslaw?ref=zone,salad-recipes')
+        #json_scraper('http://www.taste.com.au/recipes/37970/chorizo+and+crisp+smashed+potato+salad?ref=zone,salad-recipes')
+        #scraper('http://www.taste.com.au/recipes/37822/chilli+mint+chicken+with+avocado+and+snow+pea+sprouts?ref=zone,lunch-and-snacks')
+        json_scraper(url)
+
 
 
 

@@ -1,15 +1,15 @@
+
 from flask import Flask
-from scraper_function import scraper, json_scraper
 import json
+import os
+import subprocess
 app = Flask(__name__)
 
 @app.route('/recipe/<url>')
 def crawl(url):
     url = url.replace('~', '/')
-    url = 'http://www.taste.com.au/recipes/25859/oven+baked+chicken+and+chorizo+paella'
-    result = json_scraper(url)
-
-    return result
+    result = subprocess.check_output(['python', 'scraper_function.py', url])
+    return str(result)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
